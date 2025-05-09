@@ -1,25 +1,34 @@
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { View, Image, StyleSheet, ScrollView, Dimensions } from "react-native";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Svg, { Circle } from "react-native-svg";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 
 type WorkoutDetailsProps = {
   id: number;
 };
 
-const { width, height } = Dimensions.get("window");
-const images = [
-  require("../assets/images/move_demonstration/bench_press_barbell/d1.webp"),
-  require("../assets/images/move_demonstration/bench_press_barbell/b1.jpg"),
-  require("../assets/images/move_demonstration/bench_press_barbell/b2.jpg"),
-  require("../assets/images/move_demonstration/bench_press_barbell/a1.png"),
-  require("../assets/images/move_demonstration/bench_press_barbell/a2.png"),
-  require("../assets/images/move_demonstration/bench_press_barbell/c1.jpg"),
-  require("../assets/images/move_demonstration/bench_press_barbell/c2.jpg"),
+const WORKOUTS = [
+  { name: "Bench Press", description: "Chest exercise" },
+  { name: "Squats", description: "Leg exercise" },
 ];
 
-const WorkoutDetails: React.FC<WorkoutDetailsProps> = (id) => {
+const { width, height } = Dimensions.get("window");
+const images = [
+  require("../../assets/images/move_demonstration/bench_press_barbell/d1.webp"),
+  require("../../assets/images/move_demonstration/bench_press_barbell/b1.jpg"),
+  require("../../assets/images/move_demonstration/bench_press_barbell/b2.jpg"),
+  require("../../assets/images/move_demonstration/bench_press_barbell/a1.png"),
+  require("../../assets/images/move_demonstration/bench_press_barbell/a2.png"),
+  require("../../assets/images/move_demonstration/bench_press_barbell/c1.jpg"),
+  require("../../assets/images/move_demonstration/bench_press_barbell/c2.jpg"),
+];
+
+const WorkoutDetails = () => {
+  const navigation = useNavigation();
+  const { id } = useLocalSearchParams();
+  const workout = WORKOUTS[Number(id)];
   const [currentIndex, setCurrentIndex] = useState(0);
   const scrollRef = useRef<ScrollView>(null);
 
@@ -29,8 +38,14 @@ const WorkoutDetails: React.FC<WorkoutDetailsProps> = (id) => {
     setCurrentIndex(index);
   };
 
+  useEffect(() => {
+    navigation.setOptions({
+      title: workout.name || "Workout Details",
+    });
+  }, [workout.name]);
+
   return (
-    <ThemedView lightMode={false}>
+    <ThemedView>
       <View style={styles.wrapper}>
         <ScrollView
           ref={scrollRef}
@@ -56,11 +71,9 @@ const WorkoutDetails: React.FC<WorkoutDetailsProps> = (id) => {
           </Svg>
         </View>
       </View>
-      <ThemedView lightMode={false}>
-        <ThemedText lightMode={false} type="subtitle">
-          Bench Press
-        </ThemedText>
-        <ThemedText lightMode={false}>other stuff how to do it and stuff</ThemedText>
+      <ThemedView>
+        <ThemedText type="subtitle">Bench Press</ThemedText>
+        <ThemedText>other stuff how to do it and stuff</ThemedText>
       </ThemedView>
     </ThemedView>
   );
